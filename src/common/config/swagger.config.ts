@@ -10,7 +10,6 @@ const config = new DocumentBuilder()
   .setTitle('E-Wallet API Docs')
   .setDescription('E-Wallet API documentation')
   .setVersion('1.0.0')
-  .addTag('Home')
   .build();
 
 const customOptions: SwaggerCustomOptions = {
