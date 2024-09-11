@@ -3,8 +3,10 @@ import {
   Controller,
   Get,
   Param,
+  ParseIntPipe,
   ParseUUIDPipe,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { WalletService } from './wallet.service';
@@ -36,5 +38,43 @@ export class WalletController {
   @Get('/:id')
   findWalletById(@Param('id', ParseUUIDPipe) walletId: string) {
     return this.walletService.findWalletById(walletId);
+  }
+
+  @Get('/:id/outgoing-transactions')
+  async getOutGoingTransactions(
+    @Param('id', ParseUUIDPipe) walletId: string,
+    @LoggedInUser('id') userId: string,
+    @Query('page', ParseIntPipe) page: number = 1,
+    @Query('limit', ParseIntPipe) limit: number = 10,
+  ) {
+    return this.walletService.getSentTransactions(
+      userId,
+      walletId,
+      page,
+      limit,
+    );
+  }
+
+  @Get('/:id/incoming-transactions')
+  async getIncomingTransactions(
+    @Param('id', ParseUUIDPipe) walletId: string,
+    @LoggedInUser('id') userId: string,
+    @Query('page', ParseIntPipe) page: number = 1,
+    @Query('limit', ParseIntPipe) limit: number = 10,
+  ) {
+    return this.walletService.getIncomingTransactions(
+      userId,
+      walletId,
+      page,
+      limit,
+    );
+  }
+
+  @Get(':id/suggested-wallets')
+  async getTopSentWallets(
+    @LoggedInUser('id') userId: string,
+    @Param('id') walletId: string,
+  ) {
+    return this.walletService.getTopSentWallets(userId, walletId);
   }
 }

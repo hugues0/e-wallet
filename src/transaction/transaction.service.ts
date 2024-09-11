@@ -190,13 +190,26 @@ export class TransactionService {
       status: TransactionStatus.COMPLETED,
     };
 
-    return this.prisma.transaction.findMany({
-      where: conditions,
-      skip: (page - 1) * limit,
-      take: limit,
-      orderBy: {
-        createdAt: 'desc',
-      },
-    });
+    const [transactions, totalTransactions] = await this.prisma.$transaction([
+      this.prisma.transaction.findMany({
+        where: conditions,
+        skip: (page - 1) * limit,
+        take: limit,
+        orderBy: {
+          createdAt: 'desc',
+        },
+      }),
+      this.prisma.transaction.count({
+        where: conditions,
+      }),
+    ]);
+
+    return {
+      data: transactions,
+      total: totalTransactions,
+      page,
+      limit,
+      totalPages: Math.ceil(totalTransactions / limit),
+    };
   }
 }
