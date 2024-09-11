@@ -10,6 +10,8 @@ import { AuthModule } from './auth/auth.module';
 import { BullModule } from '@nestjs/bullmq';
 import { MailModule } from './mail/mail.module';
 import { WalletModule } from './wallet/wallet.module';
+import { TransactionModule } from './transaction/transaction.module';
+import { OneTimePassCodeModule } from './one-time-pass-code/one-time-pass-code.module';
 @Module({
   imports: [
     ThrottlerModule.forRoot({
@@ -33,6 +35,8 @@ import { WalletModule } from './wallet/wallet.module';
     AuthModule,
     MailModule,
     WalletModule,
+    TransactionModule,
+    OneTimePassCodeModule,
   ],
   controllers: [AppController],
   providers: [

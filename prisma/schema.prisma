@@ -75,6 +75,8 @@ model Transaction {
   currency         Currency
   otp              String?
   otpExpiresAt     DateTime?
+  refNumber        String
+  userId           String
   senderWalletId   String
   receiverWalletId String
   status           TransactionStatus @default(PENDING)

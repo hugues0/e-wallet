@@ -15,7 +15,7 @@ import { SkipThrottle } from '@nestjs/throttler';
 import { LoggedInUser } from 'src/auth/decorators';
 
 @SkipThrottle()
-@ApiTags('Wallet')
+@ApiTags('Wallets')
 @Controller('wallet')
 @UseGuards(JwtGuard)
 @ApiBearerAuth()
