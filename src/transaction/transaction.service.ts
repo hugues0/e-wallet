@@ -13,6 +13,7 @@ import { Queue } from 'bullmq';
 import { TransactionOtpDto } from './dto/otp.dto';
 import { TransactionStatus } from '@prisma/client';
 import * as bcrypt from 'bcryptjs';
+import { ulid } from 'ulid';
 
 @Injectable()
 export class TransactionService {
@@ -42,12 +43,12 @@ export class TransactionService {
       const receiverWallet = await this.findWallet(dto.receiverWalletId);
       if (!receiverWallet) {
         throw new NotFoundException(
-          `Reciver wallet ${dto.receiverWalletId} not found`,
+          `Receiver wallet ${dto.receiverWalletId} not found`,
         );
       }
 
       if (senderWallet && +senderWallet.balance < dto.amount) {
-        throw new NotFoundException(
+        throw new UnauthorizedException(
           `Insufficient funds, please load more funds on your wallet and try again`,
         );
       }
@@ -55,7 +56,7 @@ export class TransactionService {
       const { otpExpiresAt, otp, hashedOtp } =
         await this.otpService.generateOtp();
 
-      const refNumber = `${dto.type}-${dto.senderWalletId}`;
+      const refNumber = `TRSCTN-${dto.type}-${ulid()}`;
       const [transaction] = await this.prisma.$transaction([
         this.prisma.transaction.create({
           data: {

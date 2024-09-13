@@ -1,6 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Currency, TransactionType } from '@prisma/client';
-import { Decimal } from '@prisma/client/runtime/library';
 import {
   IsEnum,
   IsNotEmpty,
@@ -34,7 +33,7 @@ export class CreateTransactionDto {
   @IsNotEmpty()
   @ApiProperty({
     type: 'string',
-    default: TransactionType.DEBIT,
+    default: TransactionType.INTERWALLET,
     required: true,
   })
   type: TransactionType;

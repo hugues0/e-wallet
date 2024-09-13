@@ -5,14 +5,25 @@ import {
 } from '@nestjs/common';
 import { CreateWalletDto } from './dto/create-wallet.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
-import { subMonths } from 'date-fns';
+import { subMonths, subDays } from 'date-fns';
+
 @Injectable()
 export class WalletService {
   constructor(private prisma: PrismaService) {}
 
   async createWallet(dto: CreateWalletDto, userId: string) {
     try {
+      const existingWallet = await this.prisma.wallet.findFirst({
+        where: {
+          userId,
+          currency: dto.currency,
+        },
+      });
+
+      if (existingWallet)
+        throw new ConflictException(
+          `You already have a ${dto.currency} account`,
+        );
       const wallet = await this.prisma.wallet.create({
         data: {
           ...dto,
@@ -29,13 +40,6 @@ export class WalletService {
         data: { wallet },
       };
     } catch (error) {
-      if (error instanceof PrismaClientKnownRequestError) {
-        if (error.code === 'P2002') {
-          throw new ConflictException(
-            `You already have a ${dto.currency} account`,
-          );
-        }
-      }
       throw error;
     }
   }
@@ -62,7 +66,6 @@ export class WalletService {
         where: { id: walletId },
         select: {
           id: true,
-          balance: true,
           currency: true,
           user: {
             select: {
@@ -218,5 +221,39 @@ export class WalletService {
     );
 
     return walletDetails;
+  }
+
+  async generateMonthlyReport(userId: string, walletId: string) {
+    const wallet = await this.prisma.wallet.findUnique({
+      where: {
+        id: walletId,
+        userId,
+      },
+      include: {
+        user: true,
+      },
+    });
+
+    if (!wallet)
+      throw new NotFoundException(
+        `Wallet with provided ID ${walletId} could not be founf`,
+      );
+
+    const thirtyDaysAgo = subDays(new Date(), 30);
+
+    const transactions = await this.prisma.transaction.findMany({
+      where: {
+        OR: [{ senderWalletId: walletId }, { receiverWalletId: walletId }],
+        createdAt: {
+          gte: thirtyDaysAgo,
+        },
+      },
+      include: {
+        senderWallet: true,
+        receiverWallet: true,
+      },
+    });
+
+    return transactions;
   }
 }

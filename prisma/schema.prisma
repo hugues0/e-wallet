@@ -20,8 +20,8 @@ enum UserStatus {
 }
 
 enum TransactionType {
-  DEBIT
-  CREDIT
+  INTERWALLET
+  EXTERNAL       //would be used for in  outgoing/incoming external transfers
 }
 
 enum TransactionStatus {

@@ -4,7 +4,6 @@ import * as sgMail from '@sendgrid/mail';
 type MailData = {
   to: string;
   templateId: string;
-  firstName: string;
   dynamicData: unknown;
 };
 @Injectable()

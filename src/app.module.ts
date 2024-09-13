@@ -28,7 +28,7 @@ import { OneTimePassCodeModule } from './one-time-pass-code/one-time-pass-code.m
     BullModule.forRoot({
       connection: {
         host: process.env.REDIS_HOST,
-        port: 6379,
+        port: +process.env.REDIS_PORT,
       },
     }),
     PrismaModule,
