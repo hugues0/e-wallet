@@ -16,10 +16,13 @@ import { WalletService } from './wallet.service';
 import { CreateWalletDto } from './dto/create-wallet.dto';
 import {
   ApiBearerAuth,
+  ApiConflictResponse,
+  ApiCreatedResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
   ApiOperation,
   ApiParam,
   ApiQuery,
-  ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
 import { JwtGuard } from 'src/auth/guards';
@@ -36,8 +39,11 @@ export class WalletController {
 
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: 'Create a user wallet' })
-  @ApiResponse({ status: 201, description: 'Wallet successfully created' })
-  @ApiResponse({
+  @ApiCreatedResponse({
+    status: 201,
+    description: 'Wallet successfully created',
+  })
+  @ApiConflictResponse({
     status: 409,
     description: 'User already has provided currency wallet',
   })
@@ -48,21 +54,23 @@ export class WalletController {
   ) {
     return this.walletService.createWallet(walletDto, userId);
   }
+
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Return all wallets registered to authenticated user',
   })
-  @ApiResponse({ status: 200, description: 'Wallets successfully retrieved' })
+  @ApiOkResponse({ status: 200, description: 'Wallets successfully retrieved' })
   @Get()
   findUserWallets(@LoggedInUser('id') userId: string) {
     return this.walletService.findUserWallets(userId);
   }
-  @ApiResponse({ status: 200, description: 'Wallet successfully retrieved' })
-  @ApiResponse({
+
+  @HttpCode(HttpStatus.OK)
+  @ApiOkResponse({ status: 200, description: 'Wallet successfully retrieved' })
+  @ApiNotFoundResponse({
     status: 404,
     description: 'Wallet with provided ID could not be found',
   })
-  @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Return a single wallet and its owner details',
   })
@@ -81,12 +89,12 @@ export class WalletController {
   @ApiOperation({
     summary: 'Retrieving authenticated user outgoing transactions',
   })
-  @ApiResponse({
+  @ApiNotFoundResponse({
     status: 404,
     description:
       'Wallet with provided ID could not be found or does belong to user',
   })
-  @ApiResponse({
+  @ApiOkResponse({
     status: 200,
     description: 'Wallet outgoing transactions successfull retrieved',
   })
@@ -127,12 +135,12 @@ export class WalletController {
   @ApiOperation({
     summary: 'Retrieving authenticated user incoming transactions',
   })
-  @ApiResponse({
+  @ApiNotFoundResponse({
     status: 404,
     description:
       'Wallet with provided ID could not be found or does belong to user',
   })
-  @ApiResponse({
+  @ApiOkResponse({
     status: 200,
     description: 'Wallet incoming transactions successfull retrieved',
   })
@@ -174,11 +182,11 @@ export class WalletController {
     summary:
       'Retrieve suggested wallets to transfer to (most transferred to in the last 3 months)',
   })
-  @ApiResponse({
+  @ApiOkResponse({
     status: 200,
     description: 'Wallets suggestions successfully retrieved',
   })
-  @ApiResponse({
+  @ApiNotFoundResponse({
     status: 404,
     description:
       'Wallet with provided ID could not be found or does belong to user',
@@ -207,7 +215,7 @@ export class WalletController {
     required: true,
     type: String,
   })
-  @ApiResponse({
+  @ApiNotFoundResponse({
     status: 404,
     description:
       'Wallet with provided ID could not be found or does belong to user',

@@ -1,73 +1,108 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+### How to Run
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+1. System Requirements 
 
-## Description
+- [Node.js](https://nodejs.org/en/) - v20 Recommended
+- [Docker](https://docs.docker.com/install/) 
+- [Docker Compose](https://docs.docker.com/compose/install/) 
+- [Redis](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/) 
+- [PostgreSQL](https://www.postgresql.org/) 
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+2. Open the terminal and run the following commands 
 
-## Installation
+- Clone the repository
 
-```bash
-$ npm install
+```
+git clone https://github.com/hugues0/e-wallet
 ```
 
-## Running the app
+- Install dependencies
 
-```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+```
+cd e-wallet
+npm install
 ```
 
-## Test
+- Run prisma migrations
 
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+```
+npm run prisma:migrate:dev
 ```
 
-## Support
+- Generate prisma generated types
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+```
+npm run prisma:generate
+```
 
-## Stay in touch
+-  Generate an optimized version of the  application for production 
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+```
+npm run build
+```
 
-## License
+-  Start the application 
 
-Nest is [MIT licensed](LICENSE).
+```
+npm run start
+```
+
+3. the API server will be listening on [http://localhost:5000](http://localhost:5000)
+
+4. To test the API using Swagger UI, open [http://localhost:8080/docs](http://localhost:5000/api-docs)
+
+
+### Tech Stack 
+
+  - [Nest js](https://nestjs.com/) A progressive Node.js framework for building efficient, reliable and scalable server-side applications.
+
+  - [PostgreSQL](https://www.postgresql.org/) a powerful, open source object-relational database system with over 35 years of active development that has earned it a strong reputation for reliability, feature robustness, and performance.
+ 
+  - [Swagger] an open source set of rules, specifications and tools for developing and describing RESTful APIs. The Swagger framework allows developers to create interactive, machine and human-readable API documentation.
+
+   - [Redis] an open source set of rules, specifications and tools for developing and describing RESTful APIs. The Swagger framework allows developers to create interactive, machine and human-readable API documentation.
+
+
+### Database Design
+
+The database is made of 3 tables, Customers, Wallets and Transactions as shown in the Entity Relationship Diagram illustration below:
+
+ ![Tekana E-wallet ERD](./images/erd.png)
+
+- ### APIs for the E-wallet
+
+   
+
+| method             | resource         | description                                                                                    |
+|:-------------------|:-----------------|:-----------------------------------------------------------------------------------------------|
+| `POST`             | `api/auth/signup`         | Registration a new customer                                      |
+| `POST`             | `api/auth/login`     | Authentication of an existing customer                   |
+| `PATCH`             | `api/auth/verify/{email}`     | API to verify email after registration                   |
+| `POST`             | `api/auth/forgot-password/{email}`     | API for sending user password reset link in case of a forgotten password                   |
+| `PATCH`             | `api/auth/reset-password`     | API for resetting user password              |
+| `POST`             | `api/wallets`     | API for creating a wallet for authenticated user             |
+| `GET`             | `api/wallets`     | API for retrieving wallets for belonging to authenticated user             |
+| `GET`             | `api/wallets/{id}`     | API for retrieving a single wallet & details like balance for authenticated user             |
+| `GET`             | `api/wallets/{id}/outgoing-transactions`     | API for retrieving single wallet outgoing transactions belonging to authenticated user sorted by most recent           |
+| `GET`             | `api/wallets/{id}/icoming-transactions`     | API for retrieving single wallet incoming transactions belonging to authenticated user  sorted by most recent           |
+| `GET`             | `api/wallets/{id}/suggested-wallets`     | API for retrieving suggested wallets and respective owners for a single wallet (top 3 most transfered to)             |
+| `GET`             | `api/wallets/{id}/montly-statement`     | APi for generating monthly wallet statement belonging to authenticated user             |
+| `POST`             | `api/transactions`     | API for initiating a transaction             |
+| `GET`             | `api/transactions`     | API for retrieving transactions sorted by most recent             |
+| `PATCH`             | `api/transactions/confirm/{id}`     | Api for confirming and complete an initiated and pending transactions by providing a valid OTP             |
+
+
+### Sign up process illustration
+
+ ![Tekana E-wallet ERD](./images/signup.png)
+
+### Transaction initiation process illustration
+
+ ![Tekana E-wallet ERD](./images/transaction.png)
+
+
+# **Author**
+
+## **NTWARI Hugues**
+

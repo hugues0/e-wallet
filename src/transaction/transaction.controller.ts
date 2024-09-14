@@ -17,13 +17,17 @@ import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { LoggedInUser } from 'src/auth/decorators';
 import { SkipThrottle } from '@nestjs/throttler';
 import {
+  ApiBadRequestResponse,
   ApiBearerAuth,
   ApiBody,
+  ApiCreatedResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
   ApiOperation,
   ApiParam,
   ApiQuery,
-  ApiResponse,
   ApiTags,
+  ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { JwtGuard } from 'src/auth/guards';
 import { TransactionOtpDto } from './dto/otp.dto';
@@ -38,16 +42,16 @@ export class TransactionController {
 
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: 'Initiate transaction' })
-  @ApiResponse({
+  @ApiCreatedResponse({
     status: 201,
     description: 'Transaction successfully initiated',
   })
-  @ApiResponse({
+  @ApiNotFoundResponse({
     status: 404,
     description: 'Sender/Receiver wallet ID could not be found',
   })
-  @ApiResponse({
-    status: 401,
+  @ApiBadRequestResponse({
+    status: 400,
     description: 'Insufficinet funds to initiate a transfer',
   })
   @Post()
@@ -60,15 +64,15 @@ export class TransactionController {
 
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Confirm transaction with OTP delivered to email' })
-  @ApiResponse({
+  @ApiOkResponse({
     status: 200,
     description: 'Transaction successfully completed',
   })
-  @ApiResponse({
-    status: 403,
+  @ApiBadRequestResponse({
+    status: 400,
     description: 'Transaction does not have pending status',
   })
-  @ApiResponse({
+  @ApiUnauthorizedResponse({
     status: 401,
     description: 'Invalid or expired OTP was provided',
   })
@@ -91,6 +95,10 @@ export class TransactionController {
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Retrieving authenticated user paginated transactions',
+  })
+  @ApiOkResponse({
+    status: 200,
+    description: 'Transaction successfully retrieved',
   })
   @ApiQuery({
     name: 'page',

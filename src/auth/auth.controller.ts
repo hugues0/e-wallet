@@ -12,6 +12,11 @@ import {
 import { AuthService } from './auth.service';
 import { CreateAuthDto } from './dto/create-auth.dto';
 import {
+  ApiBadRequestResponse,
+  ApiConflictResponse,
+  ApiCreatedResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
   ApiOperation,
   ApiParam,
   ApiQuery,
@@ -29,12 +34,15 @@ export class AuthController {
   @HttpCode(HttpStatus.CREATED)
   @SkipThrottle()
   @ApiOperation({ summary: 'First time sign up on the Ewallet app' })
-  @ApiResponse({ status: 201, description: 'User was successfully created' })
-  @ApiResponse({
+  @ApiCreatedResponse({
+    status: 201,
+    description: 'User was successfully created',
+  })
+  @ApiConflictResponse({
     status: 409,
     description: 'User with the same email/NID card is already registered',
   })
-  @ApiResponse({
+  @ApiBadRequestResponse({
     status: 400,
     description: 'Double check your inputs for validity',
   })
@@ -45,11 +53,11 @@ export class AuthController {
 
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Sign in for existing or returning users' })
-  @ApiResponse({
+  @ApiBadRequestResponse({
     status: 401,
-    description: 'Invalid password or username,double again',
+    description: 'Invalid password or username,double check again',
   })
-  @ApiResponse({
+  @ApiOkResponse({
     status: 200,
     description: 'User has been signed in successfully',
   })
@@ -60,7 +68,7 @@ export class AuthController {
 
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Verify user email after signing up' })
-  @ApiResponse({
+  @ApiNotFoundResponse({
     status: 404,
     description: 'User with provided email could not be found',
   })
@@ -87,7 +95,7 @@ export class AuthController {
 
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'For users who have forgotten their emails' })
-  @ApiResponse({
+  @ApiNotFoundResponse({
     status: 404,
     description: 'User with provided email could not be found',
   })
@@ -112,11 +120,11 @@ export class AuthController {
 
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Reset your password by providing a new password' })
-  @ApiResponse({
+  @ApiOkResponse({
     status: 200,
     description: 'Your password has been successfully updated',
   })
-  @ApiResponse({
+  @ApiNotFoundResponse({
     status: 404,
     description: 'User with provided email could not be found',
   })
