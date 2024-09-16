@@ -56,7 +56,7 @@ npm run start
 
 3. the API server will be listening on [http://localhost:5000](http://localhost:5000)
 
-4. To test the API using Swagger UI, open [http://localhost:8080/docs](http://localhost:5000/api-docs)
+4. To test the API using Swagger UI, open [http://localhost:5000/api-docs](http://localhost:5000/api-docs)
 
 
 ### Tech Stack 
