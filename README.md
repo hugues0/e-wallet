@@ -101,17 +101,31 @@ The database is comprised of 3 tables: Users, Wallets and Transactions as shown 
 
 ### Sign up process illustration
 
- ![Tekana E-wallet ERD](./images/signup.png)
+ ![E-wallet ERD](./images/signup.png)
 
 ### Transaction initiation process illustration
 
- ![Tekana E-wallet ERD](./images/transaction.png)
+ ![E-wallet ERD](./images/transaction.png)
+
+### Sengrid templates with dynamic values for email verification, password reset and One Time Passcode for transactions confirmation
+
+ ![E-wallet Verify email via Sendgrid](./images/verify.png)
+ ![E-wallet Reset password email via Sendgrid](./images/reset.png)
+ ![E-wallet OTP email for transaction confirmation via Sendgrid](./images/otp.png)
+
+### Deployment Strategy
+
+For the deployment of the application, I chose to utilize Render (www.render.com) as the hosting platform. All services, including the backend built with Nest.js, PostgreSQL 16, and Redis,
+are running on separate instances on Render. The live version of the application is accessible at the following URL: https://e-wallet-c9ap.onrender.com/api-docs and the figure is of all running 
+instances image is provided below.
+
+ ![E-wallet Verify email via Sendgrid](./images/instances.png)
 
 ### Trade Offs
 
   - For One Time Passcode, it would have been better to deliver it to phone for a better UX but I could not find a free service for delivering phone messages hence using Sendgrid to deliver OTPs to users' emails
   - For Wallet statements it would have been better to have a dedicated queue for them the email it to wallet owner after completion but I could not find a way to make the used PDF library to work with queues in time for this project
-  - Altered build command to get around render (hosting service) not allowing pre-deploy scripts on free instances hence it first run prisma migrations
+  - Altered build script to sneakly get around render (hosting service) not allowing pre-deploy scripts on free instances hence it first run prisma migrations leading to failing CI 
 
   
 # **Author**
