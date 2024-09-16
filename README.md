@@ -110,7 +110,7 @@ The database is comprised of 3 tables: Users, Wallets and Transactions as shown 
 ### Trade Offs
 
   - For One Time Passcode, it would have been better to deliver it to phone for a better UX but I could not find a free service for delivering phone messages hence using Sendgrid to deliver OTPs to users' emails
-  - For Wallet statements it would have been better to have a dedicated queue for them but I could not find a way to make the used PDF library used to work with queues in time for this project
+  - For Wallet statements it would have been better to have a dedicated queue for them the email it to wallet owner after completion but I could not find a way to make the used PDF library to work with queues in time for this project
   - Altered build command to get around render (hosting service) not allowing pre-deploy scripts on free instances hence it first run prisma migrations
 
   
