@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Logger,
   ValidationPipe,
+  VERSION_NEUTRAL,
   VersioningType,
 } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
@@ -88,7 +89,7 @@ async function bootstrap() {
    */
   app.enableVersioning({
     type: VersioningType.URI,
-    defaultVersion: '1',
+    defaultVersion: VERSION_NEUTRAL,
   });
   /**
    * Start the app

@@ -12,14 +12,10 @@ services:
     container_name: ewallet_backend.
     build:
       context: .
-      target: development
     env_file:
       - .env
-    environment:
-      NODE_ENV: production
-      DATABASE_URL: ${DATABASE_URL}
     ports:
-      - 5000:5000
+      - 9000:9000
     depends_on:
       db:
         condition: service_healthy

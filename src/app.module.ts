@@ -12,6 +12,7 @@ import { MailModule } from './mail/mail.module';
 import { WalletModule } from './wallet/wallet.module';
 import { TransactionModule } from './transaction/transaction.module';
 import { OneTimePassCodeModule } from './one-time-pass-code/one-time-pass-code.module';
+import { GeneratePdfService } from './helpers/generate-pdf/generate-pdf.service';
 @Module({
   imports: [
     ThrottlerModule.forRoot({
@@ -46,6 +47,7 @@ import { OneTimePassCodeModule } from './one-time-pass-code/one-time-pass-code.m
       provide: APP_INTERCEPTOR,
       useClass: LoggerInterceptor,
     },
+    GeneratePdfService,
   ],
 })
 export class AppModule {}

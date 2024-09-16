@@ -9,6 +9,7 @@ import {
   ParseUUIDPipe,
   Post,
   Query,
+  Res,
   UseGuards,
   VERSION_NEUTRAL,
 } from '@nestjs/common';
@@ -28,6 +29,7 @@ import {
 import { JwtGuard } from 'src/auth/guards';
 import { SkipThrottle } from '@nestjs/throttler';
 import { LoggedInUser } from 'src/auth/decorators';
+import { Response } from 'express';
 
 @SkipThrottle()
 @ApiTags('Wallets')
@@ -224,7 +226,8 @@ export class WalletController {
   async getWalletStatement(
     @LoggedInUser('id') userId: string,
     @Param('id') walletId: string,
+    @Res() res: Response,
   ) {
-    return this.walletService.generateMonthlyReport(userId, walletId);
+    return this.walletService.generateMonthlyReport(userId, walletId, res);
   }
 }

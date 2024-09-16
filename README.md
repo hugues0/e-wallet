@@ -24,6 +24,12 @@ cd e-wallet
 npm install
 ```
 
+- Add an .env file
+
+```
+In the root folder add .env file and refer to .env.example for what env variables required for the application to run smoothly
+```
+
 - Run prisma migrations
 
 ```
@@ -66,7 +72,7 @@ npm run start
 
 ### Database Design
 
-The database is made of 3 tables, Customers, Wallets and Transactions as shown in the Entity Relationship Diagram illustration below:
+The database is comprised of 3 tables: Users, Wallets and Transactions as shown in the Entity Relationship Diagram illustration below:
 
  ![Tekana E-wallet ERD](./images/erd.png)
 
@@ -101,7 +107,12 @@ The database is made of 3 tables, Customers, Wallets and Transactions as shown i
 
  ![Tekana E-wallet ERD](./images/transaction.png)
 
+### Trade Offs
 
+  - For One Time Passcode, it would have been better to deliver it to phone for a better UX but I could not find a free service for delivering phone messages hence using Sendgrid to deliver OTPs to users' emails
+  - For Wallet statements it would have been better to have a dedicated queue for them but I could not find a way to make the used PDF library used to work with queues in time for this project
+
+  
 # **Author**
 
 ## **NTWARI Hugues**

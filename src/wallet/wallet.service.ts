@@ -1,15 +1,23 @@
 import {
   ConflictException,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { CreateWalletDto } from './dto/create-wallet.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { subMonths, subDays } from 'date-fns';
+import { TransactionStatus } from '@prisma/client';
+import { Response } from 'express';
+
+import { GeneratePdfService } from 'src/helpers/generate-pdf/generate-pdf.service';
 
 @Injectable()
 export class WalletService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private pdfService: GeneratePdfService,
+  ) {}
 
   async createWallet(dto: CreateWalletDto, userId: string) {
     try {
@@ -99,6 +107,9 @@ export class WalletService {
         sentTransactions: {
           skip,
           take: limit,
+          orderBy: {
+            createdAt: 'desc',
+          },
         },
       },
     });
@@ -139,6 +150,9 @@ export class WalletService {
         receivedTransactions: {
           skip,
           take: limit,
+          orderBy: {
+            createdAt: 'desc',
+          },
         },
       },
     });
@@ -223,7 +237,7 @@ export class WalletService {
     return walletDetails;
   }
 
-  async generateMonthlyReport(userId: string, walletId: string) {
+  async generateMonthlyReport(userId: string, walletId: string, res: Response) {
     const wallet = await this.prisma.wallet.findUnique({
       where: {
         id: walletId,
@@ -243,10 +257,19 @@ export class WalletService {
 
     const transactions = await this.prisma.transaction.findMany({
       where: {
-        OR: [{ senderWalletId: walletId }, { receiverWalletId: walletId }],
-        createdAt: {
-          gte: thirtyDaysAgo,
-        },
+        AND: [
+          {
+            OR: [{ senderWalletId: walletId }, { receiverWalletId: walletId }],
+          },
+          {
+            createdAt: {
+              gte: thirtyDaysAgo,
+            },
+          },
+          {
+            status: TransactionStatus.COMPLETED, // Include only completed transactions
+          },
+        ],
       },
       include: {
         senderWallet: true,
@@ -254,6 +277,21 @@ export class WalletService {
       },
     });
 
-    return transactions;
+    const pdfBuffer = await this.pdfService.generateStatement(
+      transactions,
+      wallet,
+    );
+
+    if (!pdfBuffer || !pdfBuffer.length) {
+      throw new InternalServerErrorException('unable to generate PDF');
+    }
+
+    res.set({
+      'Content-Type': 'application/pdf',
+      'Content-Disposition': `attachment; filename=wallet_statement_${wallet.id}.pdf`,
+      'Content-Length': pdfBuffer.length,
+    });
+
+    res.send(pdfBuffer);
   }
 }
