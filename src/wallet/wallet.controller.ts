@@ -211,6 +211,10 @@ export class WalletController {
   @ApiOperation({
     summary: 'Generate montly wallet statement',
   })
+  @ApiOkResponse({
+    status: 200,
+    description: 'Wallet monthly statement has been successfully generated',
+  })
   @ApiParam({
     name: 'id',
     description: 'ID of the wallet to generate report for',
